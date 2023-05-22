@@ -1,5 +1,7 @@
 package com.mybank.tui;
 
+import com.mybank.data.DataSource;
+import com.mybank.domain.*;
 import jexer.TAction;
 import jexer.TApplication;
 import jexer.TField;
@@ -7,6 +9,11 @@ import jexer.TText;
 import jexer.TWindow;
 import jexer.event.TMenuEvent;
 import jexer.menu.TMenu;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,9 +23,12 @@ public class TUIdemo extends TApplication {
 
     private static final int ABOUT_APP = 2000;
     private static final int CUST_INFO = 2010;
+    private static final ArrayList<Customer> customers = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         TUIdemo tdemo = new TUIdemo();
+        DataSource data = new DataSource("C:/Users/roma0/Desktop/For the lessons/code/35-tui-1-Dobrynya69/data/test.dat");
+        data.loadData();
         (new Thread(tdemo)).start();
     }
 
@@ -71,8 +81,17 @@ public class TUIdemo extends TApplication {
             public void DO() {
                 try {
                     int custNum = Integer.parseInt(custNo.getText());
-                    //details about customer with index==custNum
-                    details.setText("Owner Name: John Doe (id="+custNum+")\nAccount Type: 'Checking'\nAccount Balance: $200.00");
+                    Customer customer = Bank.getCustomer(custNum);
+                    Account account = customer.getAccount(0);
+                    String accountType = "";
+                    if (account instanceof CheckingAccount){
+                        accountType = "Checking";
+                    } else if (customer.getAccount(0) instanceof SavingsAccount) {
+                        accountType = "Savings";
+                    } else{
+                        accountType = "None";
+                    }
+                    details.setText("Owner Name: "+customer.getFirstName()+" (id="+custNum+")\nAccount Type: "+accountType+"\nAccount Balance: $"+account.getBalance()+"");
                 } catch (Exception e) {
                     messageBox("Error", "You must provide a valid customer number!").show();
                 }
