@@ -11,6 +11,7 @@ import jexer.event.TMenuEvent;
 import jexer.menu.TMenu;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,7 +28,13 @@ public class TUIdemo extends TApplication {
 
     public static void main(String[] args) throws Exception {
         TUIdemo tdemo = new TUIdemo();
-        DataSource data = new DataSource("C:/Users/roma0/Desktop/For the lessons/code/35-tui-1-Dobrynya69/data/test.dat");
+        File currentClassFile = new File(URLDecoder.decode(TUIdemo.class
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath(), "UTF-8"));
+        String classFileDirectory = currentClassFile.getParent();
+        DataSource data = new DataSource(classFileDirectory+"\\35-tui-1-Dobrynya69\\test.dat");
         data.loadData();
         (new Thread(tdemo)).start();
     }
